@@ -1,28 +1,25 @@
 CREATE TABLE users (
-   id INTEGER,
+   id INTEGER PRIMARY KEY AUTOINCREMENT,
    firstname TEXT,
    lastname TEXT,
    email TEXT,
    password TEXT,
-   permission INTEGER,
-   PRIMARY KEY(id)
+   permission INTEGER
 );
 
 CREATE TABLE classrooms (
-   id INTEGER,
-   name TEXT,
-   PRIMARY KEY(id)
+   id INTEGER PRIMARY KEY AUTOINCREMENT,
+   name TEXT
 );
 
 CREATE TABLE promos (
-   id INTEGER,
+   id INTEGER PRIMARY KEY AUTOINCREMENT,
    name TEXT,
-   grade INTEGER,
-   PRIMARY KEY(id)
+   grade INTEGER
 );
 
 CREATE TABLE students (
-   id INTEGER,
+   id INTEGER PRIMARY KEY AUTOINCREMENT,
    firstname TEXT,
    lastname TEXT,
    email TEXT,
@@ -32,7 +29,7 @@ CREATE TABLE students (
 );
 
 CREATE TABLE lessons (
-   id INTEGER,
+   id INTEGER PRIMARY KEY AUTOINCREMENT,
    name TEXT,
    date_start TEXT,
    date_end TEXT,
@@ -43,7 +40,7 @@ CREATE TABLE lessons (
 );
 
 CREATE TABLE users_lessons (
-   id INTEGER,
+   id INTEGER PRIMARY KEY AUTOINCREMENT,
    id_user INTEGER,
    id_lesson INTEGER,
    FOREIGN KEY(id_user) REFERENCES users(id),
@@ -51,7 +48,7 @@ CREATE TABLE users_lessons (
 );
 
 CREATE TABLE students_status (
-   id INTEGER,
+   id INTEGER PRIMARY KEY AUTOINCREMENT,
    id_lesson INTEGER,
    id_students INTEGER,
    status BOOLEAN,
