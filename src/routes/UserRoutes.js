@@ -3,8 +3,8 @@ const router = express.Router();
 
 const user = require("../controllers/UserControllers.js");
 
-router.get("/select", user.UserSelect);
-router.post("/testInsert", user.UserInsert);
+router.get("/", user.UserSelect);
+router.post("/add", user.UserInsert);
 
 // router.get('/api/:route', (req, res) => {
 //     const routeParam = req.params.route;

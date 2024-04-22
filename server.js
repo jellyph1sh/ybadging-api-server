@@ -6,7 +6,7 @@ const StudentsRouter = require ("./src/routes/StudentsRoute")
 
 
 app.use("/api/user", router);
-app.use("/api/students", router);
+app.use("/api/students", StudentsRouter);
 
 app.get('/', (req, res) => {
     res.send('Simple API homepage');
