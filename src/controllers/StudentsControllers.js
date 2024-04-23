@@ -1,5 +1,6 @@
 const Database = require("../../database.js");
 const DB_PATH = "./database.db";
+const moment = require("moment");
 
 
 exports.updateRFID = async (req, res) => {
@@ -78,6 +79,70 @@ exports.findStudentRFID = async (req, res) => {
     return res.status(500).json({
       status: false,
       error: "Internal server error while finding student by RFID",
+    });
+  }
+};
+
+exports.updateStudentStatus = async (req, res) => {
+  const { rfid } = req.body;
+  if (!rfid) {
+    return res.status(400).json({
+      status: false,
+      error: "RFID is required",
+    });
+  }
+  try {
+    const student = await Database.Read(
+      DB_PATH,
+      "SELECT id FROM students WHERE RFID = ?",
+      rfid
+    );
+    if (student.length === 0) {
+      return res.status(404).json({
+        status: false,
+        error: "No student found with the given RFID",
+      });
+    }
+    const studentId = student[0].id;
+    // Trouver la leçon en cours (où la date actuelle est entre date_start et date_end)
+    const currentTime = moment().format("DD/MM/YYYY HH:mm:ss");
+    const ongoingLesson = await Database.Read(
+      DB_PATH,
+      "SELECT id FROM lessons WHERE date_start <= ? AND date_end >= ?",
+      currentTime,
+      currentTime
+    );
+
+    if (ongoingLesson.length === 0) {
+      return res.status(404).json({
+        status: false,
+        error: "No lesson in progress",
+      });
+    }
+
+    const lessonId = ongoingLesson[0].id;
+
+    const result = await Database.Write(
+      DB_PATH,
+      "UPDATE students_status SET status = ? WHERE id_lesson = ? AND id_students = ?",
+      true, // Marque comme présent
+      lessonId,
+      studentId
+    );
+
+    if (result instanceof Error) {
+      throw result;
+    }
+
+    return res.status(200).json({
+      status: true,
+      message: "Student status updated for the ongoing lesson",
+    });
+  } catch (error) {
+    console.error("Error updating student status:", error);
+    return res.status(500).json({
+      status: false,
+      error: "Internal server error while updating student status",
     });
   }
 };

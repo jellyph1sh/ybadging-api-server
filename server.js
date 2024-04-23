@@ -3,10 +3,14 @@ const app = express();
 app.use(express.json());
 const router = require("./src/routes/UserRoutes");
 const StudentsRouter = require ("./src/routes/StudentsRoute")
-
+const lessonsRouter = require ("./src/routes/LessonsRoutes")
+const UserLessonRouter = require("./src/routes/UsersLessonsRoute");
 
 app.use("/api/user", router);
 app.use("/api/students", StudentsRouter);
+app.use("/api/lessons", lessonsRouter);
+app.use("/api/userLesson", UserLessonRouter);
+
 
 app.get('/', (req, res) => {
     res.send('Simple API homepage');
