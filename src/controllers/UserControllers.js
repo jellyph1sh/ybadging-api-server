@@ -16,6 +16,30 @@ exports.UserSelect = async (req, res) => {
     }
 };
 
+exports.getAllProfessors = async (req, res) => {
+  try {
+    // Si vous avez un champ de permission pour différencier les professeurs
+    const result = await Database.Read(
+      DB_PATH,
+      "SELECT id, firstname, lastname FROM users WHERE permission = 1" // Par exemple, permission = 1 pour les professeurs
+    );
+
+    if (result instanceof Error) {
+      throw result;
+    }
+
+    res.status(200).json({
+      status: true,
+      professors: result,
+    });
+  } catch (error) {
+    console.error("Error retrieving professors:", error);
+    res.status(500).json({
+      status: false,
+      error: "Internal server error while retrieving professors",
+    });
+  }
+};
 
 exports.addUser = async (req, res) => {
   const { firstname, lastname, email, password, permission } = req.body;
