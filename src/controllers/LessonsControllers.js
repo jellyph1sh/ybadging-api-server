@@ -15,19 +15,53 @@ exports.index = async (req, res) => {
   }
 };
 
+exports.getLessons = async (req, res) => {
+  try {
+    const result = await Database.Read(
+      DB_PATH,
+      `SELECT
+      lessons.id AS id,
+      lessons.name AS name,
+      lessons.date_start AS dateStart,
+      lessons.date_end AS dateEnd,
+      promos.name AS namePromo,
+      classrooms.name AS nameClassroom,
+      users.firstname || ' ' || users.lastname AS professor1,
+      NULL AS professor2
+    FROM
+      lessons
+    LEFT JOIN classrooms ON lessons.id_classroom = classrooms.id
+    LEFT JOIN promos ON lessons.id_promo = promos.id
+    LEFT JOIN users_lessons ON lessons.id = users_lessons.id_lesson
+    LEFT JOIN users ON users_lessons.id_user = users.id`
+    );
+    if (result instanceof Error) {
+      throw result;
+    }
+    return res.status(200).json({
+      status: true,
+      lessons: result,
+    });
+  } catch (error) {
+    console.error("Error retrieving lesson data:", error);
+    return res.status(500).json({
+      status: false,
+      error: "Internal server error while retrieving lesson data",
+    });
+  }
+};
+
+
 // Endpoint pour créer une leçon
 exports.createLesson = async (req, res) => {
   const { name, date_start, date_end, id_classroom, id_promo } = req.body;
-
   if (!name || !date_start || !date_end || !id_classroom || !id_promo) {
     return res.status(400).json({
       status: false,
       error: "All fields are required: name, date_start, date_end, id_classroom, id_promo",
     });
   }
-
   try {
-    // Créer la leçon
     const result = await Database.Write(
       DB_PATH,
       "INSERT INTO lessons (name, date_start, date_end, id_classroom, id_promo) VALUES (?, ?, ?, ?, ?)",
@@ -37,18 +71,13 @@ exports.createLesson = async (req, res) => {
     if (result instanceof Error) {
       throw result;
     }
-
-    // Récupérer l'ID de la leçon nouvellement créée
     const newLesson = await Database.Read(
       DB_PATH,
       "SELECT MAX(id) AS id FROM lessons"
     );
     const lessonId = newLesson[0].id;
     console.log (lessonId)
-
-    // Ajouter les étudiants de la promo à la table des statuts
     await addPromoToStatus(id_promo, lessonId);
-
     return res.status(201).json({
       status: true,
       message: "Lesson created successfully",
@@ -61,7 +90,6 @@ exports.createLesson = async (req, res) => {
     });
   }
 };
-
 // Fonction pour ajouter les étudiants d'une promo à la table des statuts
 const addPromoToStatus = async (id_promo, id_lesson) => {
   try {
