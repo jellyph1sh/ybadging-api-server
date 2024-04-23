@@ -5,11 +5,13 @@ const router = require("./src/routes/UserRoutes");
 const StudentsRouter = require ("./src/routes/StudentsRoute")
 const lessonsRouter = require ("./src/routes/LessonsRoutes")
 const UserLessonRouter = require("./src/routes/UsersLessonsRoute");
+const promosRouter = require("./src/routes/PromosRoutes"); 
 
 app.use("/api/user", router);
 app.use("/api/students", StudentsRouter);
 app.use("/api/lessons", lessonsRouter);
 app.use("/api/userLesson", UserLessonRouter);
+app.use("/api/promos", promosRouter);
 
 
 app.get('/', (req, res) => {
