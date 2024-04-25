@@ -8,6 +8,16 @@ const UserLessonRouter = require("./src/routes/UsersLessonsRoute");
 const promosRouter = require("./src/routes/PromosRoutes"); 
 const classroomsRouter = require("./src/routes/ClassroomRoute");
 
+app.use((_req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header(
+      "Access-Control-Allow-Methods",
+      "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+    );
+    res.header("Access-Control-Allow-Headers","*");
+    next();
+  });
+
 app.use("/api/user", router);
 app.use("/api/students", StudentsRouter);
 app.use("/api/lessons", lessonsRouter);
