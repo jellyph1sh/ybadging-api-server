@@ -48,7 +48,7 @@ exports.createStudent = async (req, res) => {
 };
 
 exports.studentsForLesson = async (req, res) => {
-  const { idLesson } = req.body;
+  const idLesson = req.query;
 
   if (!idLesson) {
     return res.status(400).json({
@@ -73,7 +73,7 @@ exports.studentsForLesson = async (req, res) => {
          students.id = students_status.id_students 
        WHERE 
          students_status.id_lesson = ?`,
-      idLesson
+      idLesson.id
     );
 
     if (result instanceof Error) {
