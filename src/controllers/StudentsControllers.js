@@ -110,8 +110,9 @@ exports.updateStudentStatus = async (req, res) => {
       "UPDATE students_status SET status = ? WHERE id_lesson = ? AND id_students = ?",
       status, idLesson, idStudent
     );
-    if (result instanceof Error || result.changes === 0) {
-      throw new Error("Unable to update status, check lesson and student IDs");
+
+    if (result instanceof Error) {
+      throw result;
     }
     return res.status(200).json({
       status: true,
@@ -233,9 +234,7 @@ exports.updateStudentStatusRFID = async (req, res) => {
         error: "No lesson in progress",
       });
     }
-
     const lessonId = ongoingLesson[0].id;
-
     const result = await Database.Write(
       DB_PATH,
       "UPDATE students_status SET status = ? WHERE id_lesson = ? AND id_students = ?",
