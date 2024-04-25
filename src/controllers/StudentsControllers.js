@@ -3,40 +3,6 @@ const DB_PATH = "./database.db";
 const moment = require("moment");
 
 
-exports.updateRFID = async (req, res) => {
-  // Check if id and RFID are provided
-  const { id, rfid } = req.body;
-  if (!id || !rfid) {
-    return res.status(400).json({
-      status: false,
-      error: "You must provide a student ID and a new RFID",
-    });
-  }
-  try {
-    const result = await Database.Write(
-      DB_PATH,
-      "UPDATE students SET RFID = ? WHERE id = ?",
-      rfid,
-      id
-    );
-
-    if (result instanceof Error) {
-      throw result;
-    }
-    console.log("RFID successfully updated for student", id);
-    return res.status(200).json({
-      status: true,
-      message: "RFID successfully updated",
-    });
-  } catch (error) {
-    console.error("Error updating RFID:", error);
-    return res.status(500).json({
-      status: false,
-      error: "Internal server error while updating RFID",
-    });
-  }
-};
-
 exports.index = async (req, res) => {
   try {
     let students = await Database.Read(
@@ -49,6 +15,37 @@ exports.index = async (req, res) => {
       res.status(500).json({ error: "Erreur lors de la récupération des étudient" });
   }
 }
+
+exports.createStudent = async (req, res) => {
+  const { firstname, lastname, email, RFID = null, idPromo } = req.body;
+  if (!firstname || !lastname || !email || !idPromo) {
+    return res.status(400).json({
+      status: false,
+      error: "Missing required fields: firstname, lastname, email, idPromo",
+    });
+  }
+
+  try {
+    const result = await Database.Write(
+      DB_PATH,
+      "INSERT INTO students (firstname, lastname, email, RFID, id_promo) VALUES (?, ?, ?, ?, ?)",
+      firstname, lastname, email, RFID, idPromo
+    );
+    if (result instanceof Error) {
+      throw result;
+    }
+    return res.status(201).json({
+      status: true,
+      message: "Student created successfully",
+    });
+  } catch (error) {
+    console.error("Error creating student:", error);
+    return res.status(500).json({
+      status: false,
+      error: "Internal server error while creating student",
+    });
+  }
+};
 
 exports.studentsForLesson = async (req, res) => {
   const { idLesson } = req.body;
@@ -92,6 +89,43 @@ exports.studentsForLesson = async (req, res) => {
     return res.status(500).json({
       status: false,
       error: "Internal server error while retrieving students for lesson",
+    });
+  }
+};
+//_________________________________________________________________
+//rfid
+
+
+exports.updateRFID = async (req, res) => {
+  // Check if id and RFID are provided
+  const { id, rfid } = req.body;
+  if (!id || !rfid) {
+    return res.status(400).json({
+      status: false,
+      error: "You must provide a student ID and a new RFID",
+    });
+  }
+  try {
+    const result = await Database.Write(
+      DB_PATH,
+      "UPDATE students SET RFID = ? WHERE id = ?",
+      rfid,
+      id
+    );
+
+    if (result instanceof Error) {
+      throw result;
+    }
+    console.log("RFID successfully updated for student", id);
+    return res.status(200).json({
+      status: true,
+      message: "RFID successfully updated",
+    });
+  } catch (error) {
+    console.error("Error updating RFID:", error);
+    return res.status(500).json({
+      status: false,
+      error: "Internal server error while updating RFID",
     });
   }
 };

@@ -7,6 +7,7 @@ StudentsRouter.post('/find',students.findStudentRFID)
 StudentsRouter.get('/',students.index)
 StudentsRouter.put("/status", students.updateStudentStatus);
 StudentsRouter.get("/lesson", students.studentsForLesson);
+StudentsRouter.get("/add", students.createStudent);
 
 
 
