@@ -92,6 +92,40 @@ exports.studentsForLesson = async (req, res) => {
     });
   }
 };
+
+
+exports.updateStudentStatus = async (req, res) => {
+  const { idLesson, idStudent, status } = req.body;
+
+  if (idLesson === undefined || idStudent === undefined || status === undefined) {
+    return res.status(400).json({
+      status: false,
+      error: "Required fields: idLesson, idStudent, status",
+    });
+  }
+
+  try {
+    const result = await Database.Write(
+      DB_PATH,
+      "UPDATE students_status SET status = ? WHERE id_lesson = ? AND id_students = ?",
+      status, idLesson, idStudent
+    );
+    if (result instanceof Error || result.changes === 0) {
+      throw new Error("Unable to update status, check lesson and student IDs");
+    }
+    return res.status(200).json({
+      status: true,
+      message: "Student status updated successfully",
+    });
+  } catch (error) {
+    console.error("Error updating student status:", error);
+    return res.status(500).json({
+      status: false,
+      error: "Internal server error while updating student status",
+    });
+  }
+};
+
 //_________________________________________________________________
 //rfid
 
@@ -163,7 +197,7 @@ exports.findStudentRFID = async (req, res) => {
   }
 };
 
-exports.updateStudentStatus = async (req, res) => {
+exports.updateStudentStatusRFID = async (req, res) => {
   const { rfid } = req.body;
   if (!rfid) {
     return res.status(400).json({
