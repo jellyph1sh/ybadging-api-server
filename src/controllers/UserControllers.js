@@ -78,3 +78,50 @@ exports.addUser = async (req, res) => {
   }
 };
 
+exports.loginUser = async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({
+      status: false,
+      error: "Email and password are required",
+    });
+  }
+  
+  try {
+    const user = await Database.Read(
+      DB_PATH,
+      "SELECT * FROM users WHERE email = ?",
+      email
+    );
+    if (user.length === 0) {
+      return res.status(404).json({
+        status: false,
+        error: "User not found",
+      });
+    }
+
+    const isMatch = await bcrypt.compare(password, user[0].password);
+    if (!isMatch && !password == user[0].password) {
+      return res.status(401).json({
+        status: false,
+        error: "Incorrect password",
+      });
+    }
+    res.status(200).json({
+      status: true,
+      message: "Login successful",
+      user: {
+        id: user[0].id,
+        firstname: user[0].firstname,
+        lastname: user[0].lastname,
+        email: user[0].email,
+      },
+    });
+  } catch (error) {
+    console.error("Error during login:", error);
+    res.status(500).json({
+      status: false,
+      error: "Internal server error during login",
+    });
+  }
+};
