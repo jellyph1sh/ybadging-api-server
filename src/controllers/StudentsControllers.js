@@ -3,6 +3,134 @@ const DB_PATH = "./database.db";
 const moment = require("moment");
 
 
+exports.index = async (req, res) => {
+  try {
+    let students = await Database.Read(
+        DB_PATH,
+        "SELECT * FROM students"
+    );
+    res.json({ students: students });
+  } catch (error) {
+      console.error("Erreur lors de la récupération des étudient:", error);
+      res.status(500).json({ error: "Erreur lors de la récupération des étudient" });
+  }
+}
+
+exports.createStudent = async (req, res) => {
+  const { firstname, lastname, email, RFID = null, idPromo } = req.body;
+  if (!firstname || !lastname || !email || !idPromo) {
+    return res.status(400).json({
+      status: false,
+      error: "Missing required fields: firstname, lastname, email, idPromo",
+    });
+  }
+
+  try {
+    const result = await Database.Write(
+      DB_PATH,
+      "INSERT INTO students (firstname, lastname, email, RFID, id_promo) VALUES (?, ?, ?, ?, ?)",
+      firstname, lastname, email, RFID, idPromo
+    );
+    if (result instanceof Error) {
+      throw result;
+    }
+    return res.status(201).json({
+      status: true,
+      message: "Student created successfully",
+    });
+  } catch (error) {
+    console.error("Error creating student:", error);
+    return res.status(500).json({
+      status: false,
+      error: "Internal server error while creating student",
+    });
+  }
+};
+
+exports.studentsForLesson = async (req, res) => {
+  const { idLesson } = req.body;
+
+  if (!idLesson) {
+    return res.status(400).json({
+      status: false,
+      error: "idLesson is required",
+    });
+  }
+
+  try {
+    const result = await Database.Read(
+      DB_PATH,
+      `SELECT 
+         students.id,
+         students.firstname,
+         students.lastname,
+         students_status.status
+       FROM 
+         students
+       LEFT JOIN 
+         students_status 
+       ON 
+         students.id = students_status.id_students 
+       WHERE 
+         students_status.id_lesson = ?`,
+      idLesson
+    );
+
+    if (result instanceof Error) {
+      throw result;
+    }
+
+    return res.status(200).json({
+      status: true,
+      students: result,
+    });
+  } catch (error) {
+    console.error("Error retrieving students for lesson:", error);
+    return res.status(500).json({
+      status: false,
+      error: "Internal server error while retrieving students for lesson",
+    });
+  }
+};
+
+
+exports.updateStudentStatus = async (req, res) => {
+  const { idLesson, idStudent, status } = req.body;
+
+  if (idLesson === undefined || idStudent === undefined || status === undefined) {
+    return res.status(400).json({
+      status: false,
+      error: "Required fields: idLesson, idStudent, status",
+    });
+  }
+
+  try {
+    const result = await Database.Write(
+      DB_PATH,
+      "UPDATE students_status SET status = ? WHERE id_lesson = ? AND id_students = ?",
+      status, idLesson, idStudent
+    );
+
+    if (result instanceof Error) {
+      throw result;
+    }
+    return res.status(200).json({
+      status: true,
+      message: "Student status updated successfully",
+    });
+  } catch (error) {
+    console.error("Error updating student status:", error);
+    return res.status(500).json({
+      status: false,
+      error: "Internal server error while updating student status",
+    });
+  }
+};
+
+//_________________________________________________________________
+//rfid
+
+
 exports.updateRFID = async (req, res) => {
   // Check if id and RFID are provided
   const { id, rfid } = req.body;
@@ -37,21 +165,8 @@ exports.updateRFID = async (req, res) => {
   }
 };
 
-exports.index = async (req, res) => {
-  try {
-    let students = await Database.Read(
-        DB_PATH,
-        "SELECT * FROM students"
-    );
-    res.json({ students: students });
-  } catch (error) {
-      console.error("Erreur lors de la récupération des étudient:", error);
-      res.status(500).json({ error: "Erreur lors de la récupération des étudient" });
-  }
-}
-
 exports.findStudentRFID = async (req, res) => {
-  const { rfid } = req.body; // Utilisation de req.query pour obtenir les paramètres de requête
+  const { rfid } = req.body; 
   if (!rfid) {
     return res.status(400).json({
       status: false,
@@ -72,7 +187,7 @@ exports.findStudentRFID = async (req, res) => {
     }
     return res.status(200).json({
       status: true,
-      student: student[0], // Retourne le premier étudiant trouvé
+      student: student[0],
     });
   } catch (error) {
     console.error("Error finding student by RFID:", error);
@@ -83,7 +198,7 @@ exports.findStudentRFID = async (req, res) => {
   }
 };
 
-exports.updateStudentStatus = async (req, res) => {
+exports.updateStudentStatusRFID = async (req, res) => {
   const { rfid } = req.body;
   if (!rfid) {
     return res.status(400).json({
@@ -119,9 +234,7 @@ exports.updateStudentStatus = async (req, res) => {
         error: "No lesson in progress",
       });
     }
-
     const lessonId = ongoingLesson[0].id;
-
     const result = await Database.Write(
       DB_PATH,
       "UPDATE students_status SET status = ? WHERE id_lesson = ? AND id_students = ?",
