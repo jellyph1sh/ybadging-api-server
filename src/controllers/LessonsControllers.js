@@ -52,7 +52,7 @@ exports.getLessons = async (req, res) => {
 };
 
 exports.getOneLesson  = async (req, res) => {
-  const {idLesson } = req.body;
+  const idLesson = req.query;
   if (!idLesson) {
     return res.status(400).json({
       status: false,
@@ -78,7 +78,7 @@ exports.getOneLesson  = async (req, res) => {
       LEFT JOIN users_lessons ON lessons.id = users_lessons.id_lesson
       LEFT JOIN users ON users_lessons.id_user = users.id
      WHERE lessons.id = ?`,
-     idLesson
+     idLesson.id
     );
     if (result instanceof Error) {
       throw result;
