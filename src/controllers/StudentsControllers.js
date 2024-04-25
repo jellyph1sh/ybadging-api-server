@@ -50,8 +50,54 @@ exports.index = async (req, res) => {
   }
 }
 
+exports.studentsForLesson = async (req, res) => {
+  const { idLesson } = req.body;
+
+  if (!idLesson) {
+    return res.status(400).json({
+      status: false,
+      error: "idLesson is required",
+    });
+  }
+
+  try {
+    const result = await Database.Read(
+      DB_PATH,
+      `SELECT 
+         students.id,
+         students.firstname,
+         students.lastname,
+         students_status.status
+       FROM 
+         students
+       LEFT JOIN 
+         students_status 
+       ON 
+         students.id = students_status.id_students 
+       WHERE 
+         students_status.id_lesson = ?`,
+      idLesson
+    );
+
+    if (result instanceof Error) {
+      throw result;
+    }
+
+    return res.status(200).json({
+      status: true,
+      students: result,
+    });
+  } catch (error) {
+    console.error("Error retrieving students for lesson:", error);
+    return res.status(500).json({
+      status: false,
+      error: "Internal server error while retrieving students for lesson",
+    });
+  }
+};
+
 exports.findStudentRFID = async (req, res) => {
-  const { rfid } = req.body; // Utilisation de req.query pour obtenir les paramètres de requête
+  const { rfid } = req.body; 
   if (!rfid) {
     return res.status(400).json({
       status: false,
@@ -72,7 +118,7 @@ exports.findStudentRFID = async (req, res) => {
     }
     return res.status(200).json({
       status: true,
-      student: student[0], // Retourne le premier étudiant trouvé
+      student: student[0],
     });
   } catch (error) {
     console.error("Error finding student by RFID:", error);

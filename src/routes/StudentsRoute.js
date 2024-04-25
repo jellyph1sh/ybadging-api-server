@@ -6,6 +6,8 @@ StudentsRouter.put('/update/rfid', students.updateRFID);
 StudentsRouter.post('/find',students.findStudentRFID)
 StudentsRouter.get('/',students.index)
 StudentsRouter.put("/status", students.updateStudentStatus);
+StudentsRouter.get("/lesson", students.studentsForLesson);
+
 
 
 module.exports = StudentsRouter;

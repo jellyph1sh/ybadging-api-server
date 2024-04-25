@@ -90,7 +90,7 @@ exports.createLesson = async (req, res) => {
     });
   }
 };
-// Fonction pour ajouter les étudiants d'une promo à la table des statuts
+
 const addPromoToStatus = async (id_promo, id_lesson) => {
   try {
     const students = await Database.Read(
