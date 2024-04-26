@@ -7,6 +7,7 @@ route.post('/add',Lessons.createLesson);
 route.get('/',Lessons.index);
 route.get('/getLessons',Lessons.getLessons);
 route.get('/getOneLesson',Lessons.getOneLesson);
+route.get('/getLessonOnProf',Lessons.getLessonOnProf)
 
 
 module.exports = route;
