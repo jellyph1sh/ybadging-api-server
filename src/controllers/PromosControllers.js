@@ -5,7 +5,7 @@ exports.getAllPromos = async (req, res) => {
   try {
     const result = await Database.Read(
       DB_PATH,
-      "SELECT id, name FROM promos"
+      "SELECT id, name, grade FROM promos"
     );
     if (result instanceof Error) {
       throw result;
