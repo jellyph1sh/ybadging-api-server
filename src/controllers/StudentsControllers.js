@@ -180,7 +180,7 @@ exports.findStudentRFID = async (req, res) => {
       rfid
     );
     if (student.length === 0) {
-      return res.status(404).json({
+      return res.status(200).json({
         status: false,
         error: "No student found with this RFID",
       });
