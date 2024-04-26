@@ -126,6 +126,7 @@ exports.createLesson = async (req, res) => {
     return res.status(201).json({
       status: true,
       message: "Lesson created successfully",
+      lessonId : lessonId,
     });
   } catch (error) {
     console.error("Error creating lesson:", error);
