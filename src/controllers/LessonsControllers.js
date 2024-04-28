@@ -26,8 +26,6 @@ exports.getLessons = async (req, res) => {
       lessons.date_end AS dateEnd,
       promos.name AS namePromo,
       classrooms.name AS nameClassroom,
-      users.firstname || ' ' || users.lastname AS professor1,
-      NULL AS professor2
     FROM
       lessons
     LEFT JOIN classrooms ON lessons.id_classroom = classrooms.id
@@ -70,8 +68,6 @@ exports.getOneLesson  = async (req, res) => {
       lessons.date_end AS dateEnd,
       promos.name AS namePromo,
       classrooms.name AS nameClassroom,
-      users.firstname || ' ' || users.lastname AS professor1,
-      NULL AS professor2
     FROM
       lessons
       LEFT JOIN classrooms ON lessons.id_classroom = classrooms.id
@@ -81,6 +77,7 @@ exports.getOneLesson  = async (req, res) => {
      WHERE lessons.id = ?`,
      idLesson.id
     );
+    result =printProf(result);
     if (result instanceof Error) {
       throw result;
     }
@@ -115,8 +112,6 @@ exports.getLessonOnProf  = async (req, res) => {
       lessons.date_end AS dateEnd,
       promos.name AS namePromo,
       classrooms.name AS nameClassroom,
-      users.firstname || ' ' || users.lastname AS professor1,
-      NULL AS professor2
     FROM
       lessons
       LEFT JOIN classrooms ON lessons.id_classroom = classrooms.id
@@ -126,6 +121,7 @@ exports.getLessonOnProf  = async (req, res) => {
      WHERE users.id = ?`,
      iduser.id
     );
+    result =printProf(result);
     if (result instanceof Error) {
       throw result;
     }
