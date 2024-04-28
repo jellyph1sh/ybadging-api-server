@@ -38,6 +38,7 @@ exports.getLessons = async (req, res) => {
     if (result instanceof Error) {
       throw result;
     }
+    result =printProf(result);
     return res.status(200).json({
       status: true,
       lessons: result,
@@ -210,3 +211,43 @@ const addPromoToStatus = async (id_promo, id_lesson) => {
     console.error("Erreur lors de l'ajout des étudiants au statut:", error);
   }
 };
+
+async function printProf(result) {
+  // Pour chaque élément du tableau `result`
+  for (const lesson of result) {
+    const id = lesson.id; // Identifiant de la leçon
+
+    try {
+      // Requête pour récupérer les professeurs associés à une leçon
+      const professorsResult = await Database.Read(
+        DB_PATH,
+        `SELECT
+          users.firstname || ' ' || users.lastname AS professor
+        FROM
+          users_lessons
+        JOIN
+          users ON users.id = users_lessons.id_user
+        WHERE 
+          users_lessons.id_lesson = ?`,
+        [id] // Paramètre de liaison
+      );
+
+      if (professorsResult && professorsResult.length > 0) {
+        // Premier professeur
+        lesson.professor1 = professorsResult[0].professor;
+
+        if (professorsResult.length > 1) {
+          // Deuxième professeur (si présent)
+          lesson.professor2 = professorsResult[1].professor;
+        } else {
+          lesson.professor2 = null;
+        }
+      } else {
+        lesson.professor1 = null; // Si aucun professeur n'est trouvé
+        lesson.professor2 = null;
+      }
+    } catch (error) {
+      console.error("Error retrieving professors:", error);
+    }
+  }
+}
