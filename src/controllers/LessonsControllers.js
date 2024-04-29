@@ -209,8 +209,9 @@ const addPromoToStatus = async (id_promo, id_lesson) => {
 };
 
 exports.deleteLesson = async (req, res) => {
-  const { idLesson } = req.params; // Supposons que l'identifiant est passé via l'URL
-
+  let idLesson = req.query; // Supposons que l'identifiant est passé via l'URL
+  idLesson = idLesson.idLesson
+  console.log(idLesson)
   if (!idLesson || isNaN(idLesson)) {
     return res.status(400).json({
       status: false,
@@ -224,7 +225,7 @@ exports.deleteLesson = async (req, res) => {
       "DELETE FROM lessons WHERE id = ?",
       idLesson
     );
-  
+
     if (result.changes === 0) {
       return res.status(404).json({
         status: false,

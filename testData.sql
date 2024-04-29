@@ -1,9 +1,9 @@
 INSERT INTO users (firstname,lastname ,email, password, permission)
 VALUES 
-    ("John","Doe","john.doe@test.fr","1234",0),
-    ("Mathilde","Aragon","mathilde.aragon@test.fr","1234",0),
-    ("Bob","Lenon","bob.lenon@test.fr","1234",1),
-    ("Dimitri","Dupuit","Dimitri.Dupuit@test.fr","1234",1);
+    ("John","Doe","john.doe@test.fr","$2b$10$6A4Tvy.1d3FPBr5f/zwA7ekYuVf0agstW4qJrTCUhSUn7GxfXCWzO",0),
+    ("Mathilde","Aragon","mathilde.aragon@test.fr","$2b$10$6A4Tvy.1d3FPBr5f/zwA7ekYuVf0agstW4qJrTCUhSUn7GxfXCWzO",0),
+    ("Bob","Lenon","bob.lenon@test.fr","$2b$10$6A4Tvy.1d3FPBr5f/zwA7ekYuVf0agstW4qJrTCUhSUn7GxfXCWzO",1),
+    ("Dimitri","Dupuit","Dimitri.Dupuit@test.fr","$2b$10$6A4Tvy.1d3FPBr5f/zwA7ekYuVf0agstW4qJrTCUhSUn7GxfXCWzO",1);
 
 INSERT INTO classrooms (name)
 VALUES 
