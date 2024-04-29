@@ -17,7 +17,7 @@ CREATE TABLE classrooms (
 -- Table des promotions
 CREATE TABLE promos (
    id INTEGER PRIMARY KEY AUTOINCREMENT,
-   name TEXT NOT NULL UNIQUE,
+   name TEXT NOT NULL,
    grade INTEGER
 );
 

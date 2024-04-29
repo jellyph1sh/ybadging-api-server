@@ -17,15 +17,15 @@ exports.index = async (req, res) => {
 
 exports.getLessons = async (req, res) => {
   try {
-    const result = await Database.Read(
+     let result = await Database.Read(
       DB_PATH,
       `SELECT
-      lessons.id AS id,
+      DISTINCT lessons.id AS id,
       lessons.name AS name,
       lessons.date_start AS dateStart,
       lessons.date_end AS dateEnd,
       promos.name AS namePromo,
-      classrooms.name AS nameClassroom,
+      classrooms.name AS nameClassroom
     FROM
       lessons
     LEFT JOIN classrooms ON lessons.id_classroom = classrooms.id
@@ -36,7 +36,8 @@ exports.getLessons = async (req, res) => {
     if (result instanceof Error) {
       throw result;
     }
-    result =printProf(result);
+    
+    result = await printProf(result);
     return res.status(200).json({
       status: true,
       lessons: result,
@@ -77,7 +78,7 @@ exports.getOneLesson  = async (req, res) => {
      WHERE lessons.id = ?`,
      idLesson.id
     );
-    result =printProf(result);
+    result = await printProf(result);
     if (result instanceof Error) {
       throw result;
     }
@@ -121,7 +122,7 @@ exports.getLessonOnProf  = async (req, res) => {
      WHERE users.id = ?`,
      iduser.id
     );
-    result =printProf(result);
+    result = await printProf(result);
     if (result instanceof Error) {
       throw result;
     }
@@ -162,7 +163,6 @@ exports.createLesson = async (req, res) => {
       "SELECT MAX(id) AS id FROM lessons"
     );
     const lessonId = newLesson[0].id;
-    console.log (lessonId)
     await addPromoToStatus(id_promo, lessonId);
     return res.status(201).json({
       status: true,
@@ -225,9 +225,9 @@ async function printProf(result) {
           users ON users.id = users_lessons.id_user
         WHERE 
           users_lessons.id_lesson = ?`,
-        [id] // Paramètre de liaison
+        id // Paramètre de liaison
       );
-
+       
       if (professorsResult && professorsResult.length > 0) {
         // Premier professeur
         lesson.professor1 = professorsResult[0].professor;
@@ -246,4 +246,5 @@ async function printProf(result) {
       console.error("Error retrieving professors:", error);
     }
   }
+  return result
 }
