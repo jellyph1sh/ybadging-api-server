@@ -208,6 +208,52 @@ const addPromoToStatus = async (id_promo, id_lesson) => {
   }
 };
 
+exports.deleteLesson = async (req, res) => {
+  const { idLesson } = req.params; // Supposons que l'identifiant est passé via l'URL
+
+  if (!idLesson || isNaN(idLesson)) {
+    return res.status(400).json({
+      status: false,
+      error: "Valid idLesson is required",
+    });
+  }
+  
+  console.log("Deleting lesson with id:", idLesson); // Confirmer que l'ID est correct
+  try {
+    const result = await Database.Write(
+      DB_PATH,
+      "DELETE FROM lessons WHERE id = ?",
+      idLesson
+    );
+  
+    console.log("Result:", result); // Voir ce que retourne la base de données
+    if (result.changes === 0) {
+      return res.status(404).json({
+        status: false,
+        error: "Lesson not found",
+      });
+    }
+    if (!result || result.changes === 0) {
+      console.log("No changes made, lesson not found or deletion failed");
+      return res.status(404).json({
+        status: false,
+        error: "Lesson not found",
+      });
+    }
+
+    res.status(200).json({
+      status: true,
+      message: "Lesson deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting lesson:", error);
+    res.status(500).json({
+      status: false,
+      error: "Internal server error while deleting lesson",
+    });
+  }
+};
+
 async function printProf(result) {
   // Pour chaque élément du tableau `result`
   for (const lesson of result) {
