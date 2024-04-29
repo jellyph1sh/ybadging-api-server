@@ -60,15 +60,15 @@ exports.getOneLesson  = async (req, res) => {
     });
   }
   try {
-    const result = await Database.Read(
+    let result = await Database.Read(
       DB_PATH,
       `SELECT
-      lessons.id AS id,
+      DISTINCT lessons.id AS id,
       lessons.name AS name,
       lessons.date_start AS dateStart,
       lessons.date_end AS dateEnd,
       promos.name AS namePromo,
-      classrooms.name AS nameClassroom,
+      classrooms.name AS nameClassroom
     FROM
       lessons
       LEFT JOIN classrooms ON lessons.id_classroom = classrooms.id
@@ -104,7 +104,7 @@ exports.getLessonOnProf  = async (req, res) => {
     });
   }
   try {
-    const result = await Database.Read(
+    let result = await Database.Read(
       DB_PATH,
       `SELECT
       lessons.id AS id,
@@ -112,7 +112,7 @@ exports.getLessonOnProf  = async (req, res) => {
       lessons.date_start AS dateStart,
       lessons.date_end AS dateEnd,
       promos.name AS namePromo,
-      classrooms.name AS nameClassroom,
+      classrooms.name AS nameClassroom
     FROM
       lessons
       LEFT JOIN classrooms ON lessons.id_classroom = classrooms.id
