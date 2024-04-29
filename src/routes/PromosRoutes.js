@@ -3,6 +3,6 @@ const router = express.Router();
 const promosController = require("../controllers/PromosControllers"); 
 
 router.get("/", promosController.getAllPromos);
-router.get("/promo-attendance/:promoId", promosController.getPromoAttendanceCounts)
+router.get("/promo-attendance/", promosController.getPromoAttendanceCounts)
 
 module.exports = router;

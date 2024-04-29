@@ -262,14 +262,12 @@ exports.updateStudentStatusRFID = async (req, res) => {
 
 exports.getAttendanceCounts = async (req, res) => {
   const { studentId } = req.query; // Récupération de l'ID de l'élève depuis l'URL
-
   if (!studentId || isNaN(studentId)) {
     return res.status(400).json({
       status: false,
       error: "Valid student ID is required",
     });
   }
-
   try {
     const result = await Database.Read(
       DB_PATH,

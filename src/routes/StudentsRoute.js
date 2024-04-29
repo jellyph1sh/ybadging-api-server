@@ -9,7 +9,7 @@ StudentsRouter.put("/rfid/status", students.updateStudentStatusRFID);
 StudentsRouter.get("/lesson", students.studentsForLesson);
 StudentsRouter.post("/add", students.createStudent);
 StudentsRouter.put("/status", students.updateStudentStatus);
-StudentsRouter.get("/attendance/:studentId", students.getAttendanceCounts);
+StudentsRouter.get("/attendance/", students.getAttendanceCounts);
 
 
 

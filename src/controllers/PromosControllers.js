@@ -32,7 +32,6 @@ exports.getPromoAttendanceCounts = async (req, res) => {
       error: "Valid promo ID is required",
     });
   }
-
   try {
     const result = await Database.Read(
       DB_PATH,
