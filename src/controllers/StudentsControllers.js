@@ -261,7 +261,7 @@ exports.updateStudentStatusRFID = async (req, res) => {
 };
 
 exports.getAttendanceCounts = async (req, res) => {
-  const { studentId } = req.params; // Récupération de l'ID de l'élève depuis l'URL
+  const { studentId } = req.query; // Récupération de l'ID de l'élève depuis l'URL
 
   if (!studentId || isNaN(studentId)) {
     return res.status(400).json({
