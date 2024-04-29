@@ -259,3 +259,51 @@ exports.updateStudentStatusRFID = async (req, res) => {
     });
   }
 };
+
+exports.getAttendanceCounts = async (req, res) => {
+  const { studentId } = req.query; // Récupération de l'ID de l'élève depuis l'URL
+  if (!studentId || isNaN(studentId)) {
+    return res.status(400).json({
+      status: false,
+      error: "Valid student ID is required",
+    });
+  }
+  try {
+    const result = await Database.Read(
+      DB_PATH,
+      `
+      SELECT 
+        SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END) AS total_presences,
+        SUM(CASE WHEN status = 0 THEN 1 ELSE 0 END) AS total_absences
+      FROM 
+        students_status
+      WHERE 
+        id_students = ?
+      `,
+      studentId
+    );
+
+    if (!result || result.length === 0) {
+      return res.status(404).json({
+        status: false,
+        error: "Student not found",
+      });
+    }
+
+    const { total_presences, total_absences } = result[0];
+
+    res.status(200).json({
+      status: true,
+      data: {
+        total_presences,
+        total_absences,
+      },
+    });
+  } catch (error) {
+    console.error("Error retrieving attendance counts:", error);
+    res.status(500).json({
+      status: false,
+      error: "Internal server error while retrieving attendance counts",
+    });
+  }
+};
