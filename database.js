@@ -66,11 +66,16 @@ class Database {
       Database.#db.run(query, args, (err) => {
         Database.#Close();
 
-        if (err === null) return resolve(null);
-        return resolve(err);
+        if (err) {
+          return reject(err);
+        }
+        return resolve({ changes: this.changes });
       });
     });
   };
+
+
+  
 }
 
 module.exports = Database;
