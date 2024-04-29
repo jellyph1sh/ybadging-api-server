@@ -8,6 +8,23 @@ const UserLessonRouter = require("./src/routes/UsersLessonsRoute");
 const promosRouter = require("./src/routes/PromosRoutes"); 
 const classroomsRouter = require("./src/routes/ClassroomRoute");
 
+
+const checkApiKey = (req, res, next) => {
+  const apiKey = req.headers["x-api-key"] || req.query.api_key;
+
+  if (!apiKey || apiKey !== "SuSj4MVysaqCGGcHmGu7W1KjMmRRP4YucTUiribkRALwq3vF7ziG80JUbVixoy1B") {
+    return res.status(403).json({
+      status: false,
+      error: "Forbidden: Invalid API key",
+    });
+  }
+
+  next();
+};
+
+//app.use(checkApiKey); 
+
+
 app.use((_req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header(

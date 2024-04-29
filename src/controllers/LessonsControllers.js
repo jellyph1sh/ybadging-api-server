@@ -218,7 +218,6 @@ exports.deleteLesson = async (req, res) => {
     });
   }
   
-  console.log("Deleting lesson with id:", idLesson); // Confirmer que l'ID est correct
   try {
     const result = await Database.Write(
       DB_PATH,
@@ -226,7 +225,6 @@ exports.deleteLesson = async (req, res) => {
       idLesson
     );
   
-    console.log("Result:", result); // Voir ce que retourne la base de données
     if (result.changes === 0) {
       return res.status(404).json({
         status: false,
