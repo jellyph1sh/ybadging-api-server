@@ -24,9 +24,9 @@ exports.getAllPromos = async (req, res) => {
 };
 
 exports.getPromoAttendanceCounts = async (req, res) => {
-  const { promoId } = req.query; // ID de la promo
+  const { id } = req.query; // ID de la promo
 
-  if (!promoId || isNaN(promoId)) {
+  if (!id || isNaN(id)) {
     return res.status(400).json({
       status: false,
       error: "Valid promo ID is required",
@@ -46,7 +46,7 @@ exports.getPromoAttendanceCounts = async (req, res) => {
       WHERE 
         s.id_promo = ?
       `,
-      promoId // Utilisation du token de liaison pour éviter l'injection SQL
+      id // Utilisation du token de liaison pour éviter l'injection SQL
     );
 
     if (!result || result.length === 0) {

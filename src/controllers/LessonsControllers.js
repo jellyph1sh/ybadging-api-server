@@ -120,7 +120,7 @@ exports.getLessonOnProf  = async (req, res) => {
       LEFT JOIN users_lessons ON lessons.id = users_lessons.id_lesson
       LEFT JOIN users ON users_lessons.id_user = users.id
      WHERE users.id = ?`,
-     iduser.id
+     iduser
     );
     result = await printProf(result);
     if (result instanceof Error) {
