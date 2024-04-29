@@ -22,7 +22,7 @@ const checkApiKey = (req, res, next) => {
   next();
 };
 
-app.use(checkApiKey); 
+//app.use(checkApiKey); 
 
 
 app.use((_req, res, next) => {
